@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-function Square({ value, onSquareClick }) {
+function Square({value, onSquareClick}) {
   return (
     <button className="square" onClick={onSquareClick}>
       {value}
@@ -8,18 +8,65 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-function Board({ xIsNext, squares, onPlay }) {
+export default function Board() { 
+  const [squares, setSquares] = useState(Array(9).fill(null));
+  const [currentMove, setCurrentMove] = useState(0);
+  const curPlayer = currentMove % 2 === 0 ? 'X' : 'O'
+  const [isPicking, setIsPicking] = useState(true);
+  const [pickedCell, setPickedCell] = useState(-1);
+
   function handleClick(i) {
-    if (calculateWinner(squares) || squares[i]) {
+    // prevent placing things if it's the end of game or clicking full tiles early game
+    if (calculateWinner(squares) || (squares[i] && currentMove < 6))
+    {
       return;
     }
-    const nextSquares = squares.slice();
-    if (xIsNext) {
-      nextSquares[i] = 'X';
-    } else {
-      nextSquares[i] = 'O';
+
+    // if it is the first 6 moves, we place anywhere
+    if (currentMove < 6) {
+        const nextSquares = squares.slice();
+        nextSquares[i] = curPlayer;
+        setSquares(nextSquares);
+        setCurrentMove(currentMove + 1);
+        return;
     }
-    onPlay(nextSquares);
+    
+    // ensure valid pick (pick owned pieces)
+    if (isPicking) {
+      if (squares[i] === curPlayer){
+        setPickedCell(i);
+        setIsPicking(!isPicking);
+        console.log("picked" + i);
+      }
+    } else {
+      // ensure placement in empty tile, ensure middle cell will be vacated, and ensure adjacency is met
+      if (!squares[i]){
+        const ADJACENT_INDICES = [
+          [1, 3, 4],
+          [0, 2, 3, 4, 5],
+          [1, 4, 5],
+          [0, 1, 4, 6, 7],
+          [0, 1, 2, 3, 5, 6, 7, 8],
+          [1, 2, 4, 7, 8],
+          [3, 4, 7],
+          [3, 4, 5, 6, 8],
+          [4, 5, 7],
+        ];
+        const validSquares = ADJACENT_INDICES[pickedCell];
+        if (validSquares.includes(i)){
+          const nextSquares = squares.slice();
+          nextSquares[i] = curPlayer;
+          nextSquares[pickedCell] = null;
+          if (!(squares[4] === curPlayer && pickedCell !== 4) || calculateWinner(nextSquares)){
+            setSquares(nextSquares);
+            setCurrentMove(currentMove + 1);
+            console.log("placed" + pickedCell);
+          }
+        }
+      }
+      setIsPicking(!isPicking);
+      setPickedCell(-1);
+    }
   }
 
   const winner = calculateWinner(squares);
@@ -27,7 +74,7 @@ function Board({ xIsNext, squares, onPlay }) {
   if (winner) {
     status = 'Winner: ' + winner;
   } else {
-    status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+    status = 'Next player: ' + curPlayer;
   }
 
   return (
@@ -52,48 +99,6 @@ function Board({ xIsNext, squares, onPlay }) {
   );
 }
 
-export default function Game() {
-  const [history, setHistory] = useState([Array(9).fill(null)]);
-  const [currentMove, setCurrentMove] = useState(0);
-  const xIsNext = currentMove % 2 === 0;
-  const currentSquares = history[currentMove];
-
-  function handlePlay(nextSquares) {
-    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
-    setHistory(nextHistory);
-    setCurrentMove(nextHistory.length - 1);
-  }
-
-  function jumpTo(nextMove) {
-    setCurrentMove(nextMove);
-  }
-
-  const moves = history.map((squares, move) => {
-    let description;
-    if (move > 0) {
-      description = 'Go to move #' + move;
-    } else {
-      description = 'Go to game start';
-    }
-    return (
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
-      </li>
-    );
-  });
-
-  return (
-    <div className="game">
-      <div className="game-board">
-        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
-      </div>
-      <div className="game-info">
-        <ol>{moves}</ol>
-      </div>
-    </div>
-  );
-}
-
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -113,34 +118,4 @@ function calculateWinner(squares) {
   }
   return null;
 }
-//import * as React from 'react'
-//import * as ReactBootstrap from 'react-bootstrap'
 
-/*const { Badge, Button, Card } = ReactBootstrap
-
-export default function App() {
-  const [name, setName] = React.useState('World')
-
-  return (
-    <div className="container py-4">
-      <Card className="starter-card shadow-sm">
-        <Card.Body className="p-4">
-          <h1 className="greeting display-6 fw-bold">Hello, {name}!</h1>
-          <p className="mb-3 text-secondary">
-            This starter is set up to match the React Essentials notes more closely.
-            For the assignment, build the tic-tac-toe tutorial in this file and leave
-            mounting to <code>src/main.jsx</code>.
-          </p>
-          <div className="d-flex gap-2 flex-wrap align-items-center">
-            <Button variant="primary" onClick={() => setName('CS 35L')}>
-              Set example name
-            </Button>
-            <Badge bg="secondary" pill>
-              ReactBootstrap ready
-            </Badge>
-          </div>
-        </Card.Body>
-      </Card>
-    </div>
-  )
-}*/

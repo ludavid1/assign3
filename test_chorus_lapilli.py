@@ -154,6 +154,82 @@ class TestChorusLapilli(unittest.TestCase):
         self.assertTileIs(tiles[0], self.SYMBOL_BLANK)
         tiles[0].click()
         self.assertTileIs(tiles[0], self.SYMBOL_X)
+    
+    def test_victory_path(self):
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        tiles[0].click()
+        self.assertTileIs(tiles[0], self.SYMBOL_X)
+        tiles[3].click()
+        self.assertTileIs(tiles[3], self.SYMBOL_O)
+        tiles[1].click()
+        self.assertTileIs(tiles[1], self.SYMBOL_X)
+        tiles[4].click()
+        self.assertTileIs(tiles[4], self.SYMBOL_O)
+        tiles[5].click()
+        self.assertTileIs(tiles[5], self.SYMBOL_X)
+        tiles[2].click()
+        self.assertTileIs(tiles[2], self.SYMBOL_O)
+        # end of first 6 turns
+
+        tiles[5].click()
+        tiles[8].click()
+        self.assertTileIs(tiles[5], self.SYMBOL_BLANK)
+        self.assertTileIs(tiles[8], self.SYMBOL_X)
+        tiles[4].click()
+        tiles[5].click()
+
+        tiles[1].click()
+        tiles[4].click()
+
+        tiles[7].click()
+        tiles[2].click()
+        tiles[7].click()
+        tiles[1].click()
+        tiles[7].click()
+        self.assertTileIs(tiles[7], self.SYMBOL_BLANK)
+
+    def test_invalid_selection_center(self):
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        tiles[0].click()
+        self.assertTileIs(tiles[0], self.SYMBOL_X)
+        tiles[3].click()
+        self.assertTileIs(tiles[3], self.SYMBOL_O)
+        tiles[1].click()
+        self.assertTileIs(tiles[1], self.SYMBOL_X)
+        tiles[4].click()
+        self.assertTileIs(tiles[4], self.SYMBOL_O)
+        tiles[5].click()
+        self.assertTileIs(tiles[5], self.SYMBOL_X)
+        tiles[2].click()
+        self.assertTileIs(tiles[2], self.SYMBOL_O)
+
+        tiles[5].click()
+        tiles[8].click()
+        self.assertTileIs(tiles[8], self.SYMBOL_X)
+        tiles[3].click()
+        tiles[7].click()
+        self.assertTileIs(tiles[7], self.SYMBOL_BLANK)
+        self.assertTileIs(tiles[3], self.SYMBOL_O)
+
+    def test_invalid_placement_adjacent(self):
+        tiles = self.driver.find_elements(By.XPATH, self.BOARD_TILE_XPATH)
+        tiles[0].click()
+        self.assertTileIs(tiles[0], self.SYMBOL_X)
+        tiles[3].click()
+        self.assertTileIs(tiles[3], self.SYMBOL_O)
+        tiles[1].click()
+        self.assertTileIs(tiles[1], self.SYMBOL_X)
+        tiles[4].click()
+        self.assertTileIs(tiles[4], self.SYMBOL_O)
+        tiles[5].click()
+        self.assertTileIs(tiles[5], self.SYMBOL_X)
+        tiles[2].click()
+        self.assertTileIs(tiles[2], self.SYMBOL_O)
+
+        tiles[5].click()
+        tiles[6].click()
+        self.assertTileIs(tiles[5], self.SYMBOL_X)
+        self.assertTileIs(tiles[6], self.SYMBOL_BLANK)
 
 
 # ================= [DO NOT MAKE ANY CHANGES BELOW THIS LINE] =================
