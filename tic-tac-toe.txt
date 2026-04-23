@@ -1,0 +1,9 @@
+After cloning and initializing the git, I briefly ran a ./helper dev to confirm my environment works properly, as well as inspecting the script and observing that ./helper dev was just an npm command. 
+
+Afterwards, I commented out the orignal body of the code to replace it with the code from the tictactoe tutorial, and I found that it worked fine (the main body of the code of course was essentially deleted, but we don't need that for this tictactoe). Interstingly, the code still worked fine with the import statements also commented out. 
+
+Following this, I more or less just followed the tutorial online. Apart from some syntax errors while typing, and the discovery of the fact that I had to use the browser console to see console logs, nothing too notable happened. I did notice that refreshing did have some minor delays on the order of a few hundred milliseconds, which was not a problem, but something that made me wonder why such a simple webpage wouldn't have near-instantaneous load times. 
+
+As the tutorial made references to ReactDevtools, I installed the extensions on my edge browser, although we didn't pursue much after that. 
+
+In terms of actually doing the project, any explanations I make would be largely redundant in light of the entire tutorial existing online. At a broader level, the webapp was written with a lot of hardcoded elements, but eventually changing the inputs to props and reorganizing the data storage hierarchy would allow us to input alternating turns. We had to use the () => trick to handle function calls, as it would otherwise trigger an infinite loop. Afterwards, we continued expanding the data structure into an array, and later an array of an arrays so that we could check history and also calculate winners (albeit hardcoded). Apart from implementing the basic functionality of the webapp, most of this code was largely refactoring that didn't impact our rendered output. 
